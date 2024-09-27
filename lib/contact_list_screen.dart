@@ -23,9 +23,32 @@ class _ContactListScreenState extends State<ContactListScreen> {
   }
 
   void _deleteContact(int index) {
-    setState(() {
-      contacts.removeAt(index);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar Exclusão'),
+          content: Text('Você tem certeza que deseja deletar este contato?'),
+          actions: [
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+            TextButton(
+              child: Text('Deletar'),
+              onPressed: () {
+                setState(() {
+                  contacts.removeAt(index);
+                });
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -33,6 +56,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Agenda de Contatos'),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent, // Cor do AppBar
       ),
       body: contacts.isEmpty
           ? Center(
@@ -45,32 +70,53 @@ class _ContactListScreenState extends State<ContactListScreen> {
               itemCount: contacts.length,
               itemBuilder: (context, index) {
                 final contact = contacts[index];
-                return ListTile(
-                  title: Text(contact.name),
-                  subtitle: Text('${contact.phone} - ${contact.email}'),
-                  trailing: Wrap(
-                    spacing: 12, // Space between buttons
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ContactFormScreen(
-                                contact: contact,
-                                onSave: (updatedContact) =>
-                                    _editContact(updatedContact, index),
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: ListTile(
+                    leading: Icon(Icons.person, size: 40),
+                    title: Text(contact.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.phone, size: 16),
+                            SizedBox(width: 4),
+                            Text(contact.phone),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.email, size: 16),
+                            SizedBox(width: 4),
+                            Text(contact.email),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: Wrap(
+                      spacing: 12,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ContactFormScreen(
+                                  contact: contact,
+                                  onSave: (updatedContact) => _editContact(updatedContact, index),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () => _deleteContact(index),
-                      ),
-                    ],
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => _deleteContact(index),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -87,6 +133,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
             ),
           );
         },
+        backgroundColor: Colors.blueAccent, // Cor do botão flutuante
       ),
     );
   }

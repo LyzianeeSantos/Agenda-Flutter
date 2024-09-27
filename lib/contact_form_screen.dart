@@ -39,7 +39,10 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
             children: [
               TextFormField(
                 initialValue: _name,
-                decoration: InputDecoration(labelText: 'Nome'),
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  prefixIcon: Icon(Icons.person),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o nome';
@@ -50,11 +53,16 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
               ),
               TextFormField(
                 initialValue: _phone,
-                decoration: InputDecoration(labelText: 'Telefone'),
+                decoration: InputDecoration(
+                  labelText: 'Telefone',
+                  prefixIcon: Icon(Icons.phone),
+                ),
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o telefone';
+                  } else if (!RegExp(r'^\(?\d{2}\)?[-.\s]?(\d{5}|\d{4})[-.\s]?\d{4}$').hasMatch(value)) {
+                    return 'Insira um Telefone válido';
                   }
                   return null;
                 },
@@ -62,7 +70,10 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
               ),
               TextFormField(
                 initialValue: _email,
-                decoration: InputDecoration(labelText: 'E-mail'),
+                decoration: InputDecoration(
+                  labelText: 'E-mail',
+                  prefixIcon: Icon(Icons.email),
+                ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -84,7 +95,7 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
                     Navigator.pop(context);
                   }
                 },
-              )
+              ),
             ],
           ),
         ),
