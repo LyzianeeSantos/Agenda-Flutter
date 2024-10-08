@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'contact_form_screen.dart';
 import 'contact_model.dart';
+import 'data/contact_repository.dart';
 
 class ContactListScreen extends StatefulWidget {
   @override
@@ -9,46 +10,34 @@ class ContactListScreen extends StatefulWidget {
 
 class _ContactListScreenState extends State<ContactListScreen> {
   List<Contact> contacts = [];
+  final ContactRepository repository = ContactRepository();
 
-  void _addContact(Contact contact) {
+  @override
+  void initState() {
+    super.initState();
+    _loadContacts();
+  }
+
+  Future<void> _loadContacts() async {
+    final data = await repository.readAllContacts();
     setState(() {
-      contacts.add(contact);
+      contacts = data;
     });
   }
 
-  void _editContact(Contact contact, int index) {
-    setState(() {
-      contacts[index] = contact;
-    });
+  void _addContact(Contact contact) async {
+    await repository.create(contact);
+    _loadContacts();
   }
 
-  void _deleteContact(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirmar Exclusão'),
-          content: Text('Você tem certeza que deseja deletar este contato?'),
-          actions: [
-            TextButton(
-              child: Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
-              },
-            ),
-            TextButton(
-              child: Text('Deletar'),
-              onPressed: () {
-                setState(() {
-                  contacts.removeAt(index);
-                });
-                Navigator.of(context).pop(); // Fecha o diálogo
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void _editContact(Contact contact, int index) async {
+    await repository.update(contact);
+    _loadContacts();
+  }
+
+  void _deleteContact(int id) async {
+    await repository.delete(id);
+    _loadContacts();
   }
 
   @override
@@ -56,8 +45,6 @@ class _ContactListScreenState extends State<ContactListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Agenda de Contatos'),
-        centerTitle: true,
-        backgroundColor: Colors.blueAccent, // Cor do AppBar
       ),
       body: contacts.isEmpty
           ? Center(
@@ -113,7 +100,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: () => _deleteContact(index),
+                          onPressed: () => _deleteContact(contact.id!),
                         ),
                       ],
                     ),
@@ -133,7 +120,6 @@ class _ContactListScreenState extends State<ContactListScreen> {
             ),
           );
         },
-        backgroundColor: Colors.blueAccent, // Cor do botão flutuante
       ),
     );
   }
