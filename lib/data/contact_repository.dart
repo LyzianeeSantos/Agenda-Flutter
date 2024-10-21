@@ -1,5 +1,6 @@
+import 'package:sqflite/sqflite.dart';
 import '../contact_model.dart';
-import 'data/contact_database.dart';
+import 'contact_database.dart';
 
 class ContactRepository {
   Future<Contact> create(Contact contact) async {

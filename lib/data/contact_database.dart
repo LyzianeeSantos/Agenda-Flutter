@@ -27,12 +27,15 @@ class ContactDatabase {
   }
 
   Future _createDB(Database db, int version) async {
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+
     await db.execute('''
     CREATE TABLE contacts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      phone TEXT NOT NULL,
-      email TEXT NOT NULL
+      id $idType,
+      name $textType,
+      phone $textType,
+      email $textType
     )
     ''');
   }
