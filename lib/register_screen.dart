@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'data/login_repository.dart';  // Para manipular os dados de login
+import 'data/login_repository.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
